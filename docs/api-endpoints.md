@@ -223,7 +223,38 @@ Resposta:
 }
 ```
 
-## 6. Testes
+## 6. Endpoints publicos de consulta
+
+Endpoints publicos nao declaram `_auth => true` e podem ser consumidos sem
+JWT. Eles devem expor apenas dados adequados para consulta publica.
+
+Entidades publicas implementadas:
+
+```http
+GET /api/animals
+GET /api/animals/{id}
+
+GET /api/species
+GET /api/species/{id}
+
+GET /api/breeds
+GET /api/breeds/{id}
+
+GET /api/ongs
+GET /api/ongs/{id}
+
+GET /api/clinics
+GET /api/clinics/{id}
+
+GET /api/veterinarians
+GET /api/veterinarians/{id}
+```
+
+Entidades como `login`, `adotante`, `administrador`, `rastreador`,
+`solicitacao_adocao`, vinculos e historicos internos nao devem ser expostas
+como endpoints publicos sem uma decisao explicita de produto e seguranca.
+
+## 7. Testes
 
 Todo comportamento novo deve ter teste automatizado.
 
