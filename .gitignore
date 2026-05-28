@@ -1,9 +1,11 @@
 .env
+.env.*
+!.env.example
+
 /vendor/*
 !vendor/FW/
-!vendor/TCPDF/
-!vendor/Firebase/
-!vendor/autoload.php
+!vendor/FW/**
+
 node_modules/
 .idea/
 .vscode/
@@ -12,3 +14,7 @@ node_modules/
 Thumbs.db
 .claude/
 test_*.php
+
+composer.phar
+package-lock.json
+info.php
