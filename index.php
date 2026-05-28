@@ -1,12 +1,23 @@
 <?php
+
 require_once 'vendor/autoload.php';
 
+use App\Api\ApiKernel;
+use App\Route;
 use Dotenv\Dotenv;
-
-session_start();
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 
 $dotenv->load();
 
-$route = new \App\Route();
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+
+if (strpos($requestPath, '/api') === 0) {
+    $api = new ApiKernel;
+    $api->send();
+    exit;
+}
+
+session_start();
+
+$route = new Route;
