@@ -2,11 +2,17 @@ use eswdev14_dsw_2026;
 
 create table login (
     id int(11) AUTO_INCREMENT primary key ,
-    data_cadastro datetime,
-    tipo_usuario enum('administrador', 'ong', 'rastreador', 'adotante', 'veterinario'),
-    email varchar(255),
-    senha varchar(50),
-    status enum('a', 'i')
+    data_cadastro datetime not null default current_timestamp,
+    tipo_usuario enum('administrador', 'ong', 'rastreador', 'adotante', 'veterinario') not null,
+    email varchar(255) not null,
+    senha varchar(255) not null,
+    status enum('a', 'i') not null default 'a',
+    fk_adotante_id int(11) null,
+    fk_rastreador_id int(11) null,
+    fk_ong_id int(11) null,
+    fk_administrador_id int(11) null,
+    fk_veterinario_id int(11) null,
+    unique key login_email_unique (email)
 );
 
 create table administrador (

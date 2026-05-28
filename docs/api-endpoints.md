@@ -147,17 +147,89 @@ Endpoint protegido:
 '_auth' => true,
 ```
 
-Hoje a base apenas exige o header:
+Rotas protegidas exigem JWT no header:
 
 ```http
 Authorization: Bearer <token>
 ```
 
-A validacao JWT real deve ser implementada no bloco de autenticacao.
+Variaveis de ambiente:
+
+```env
+JWT_SECRET=
+JWT_TTL_SECONDS=3600
+JWT_ISSUER=amigopet-api
+```
+
+`JWT_SECRET` deve ser uma chave longa o suficiente para HS256. Em desenvolvimento,
+uma forma simples de gerar a chave e:
+
+```bash
+openssl rand -hex 32
+```
+
+### Login
+
+```http
+POST /api/auth/login
+```
+
+Payload:
+
+```json
+{
+  "email": "usuario@email.com",
+  "password": "senha"
+}
+```
+
+Resposta:
+
+```json
+{
+  "data": {
+    "token": "...",
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "user": {
+      "id": 1,
+      "email": "usuario@email.com",
+      "type": "adotante",
+      "status": "a"
+    }
+  },
+  "meta": {}
+}
+```
+
+### Usuario autenticado
+
+```http
+GET /api/users/me
+Authorization: Bearer <token>
+```
+
+Resposta:
+
+```json
+{
+  "data": {
+    "id": 1,
+    "email": "usuario@email.com",
+    "type": "adotante",
+    "status": "a"
+  },
+  "meta": {}
+}
+```
 
 ## 6. Testes
 
-Todo endpoint novo deve ter teste Pest em `tests/`.
+Todo comportamento novo deve ter teste automatizado.
+
+Todo endpoint novo deve ter teste Pest em `tests/`. Nao considere um endpoint
+completo enquanto o caminho de sucesso e os erros esperados nao estiverem
+cobertos.
 
 Cobrir, quando aplicavel:
 

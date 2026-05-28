@@ -2,6 +2,9 @@
 
 namespace App\Api;
 
+use App\Auth\AuthenticatedUser;
+use App\Auth\JwtService;
+use App\DAO\LoginDAO;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -40,7 +43,7 @@ class ApiKernel
 
             $this->guard($parameters, $request);
 
-            return $this->dispatch($parameters);
+            return $this->dispatch($parameters, $request);
         } catch (MethodNotAllowedException $exception) {
             return ApiResponse::fromHttpException(new MethodNotAllowedHttpException(
                 $exception->getAllowedMethods(),
@@ -68,14 +71,28 @@ class ApiKernel
             return;
         }
 
-        if ($request->bearerToken() !== null) {
-            return;
+        $token = $request->bearerToken();
+
+        if ($token === null) {
+            throw new UnauthorizedHttpException('Bearer', 'Token de autenticação não informado.');
         }
 
-        throw new UnauthorizedHttpException('Bearer', 'Token de autenticação não informado.');
+        try {
+            $payload = JwtService::fromEnvironment()->decode($token);
+            $userId = (int) ($payload['sub'] ?? 0);
+            $login = $userId > 0 ? (new LoginDAO)->findById($userId) : null;
+
+            if (! $login || $login['status'] !== 'a') {
+                throw new \RuntimeException('Invalid token user.');
+            }
+
+            $request->setAuthenticatedUser(AuthenticatedUser::fromLoginRow($login));
+        } catch (\Throwable $exception) {
+            throw new UnauthorizedHttpException('Bearer', 'Token de autenticação inválido.');
+        }
     }
 
-    private function dispatch(array $parameters)
+    private function dispatch(array $parameters, ApiRequest $request)
     {
         $controller = $parameters['_controller'] ?? null;
         $action = $parameters['_action'] ?? null;
@@ -87,7 +104,7 @@ class ApiKernel
         }
 
         $controllerInstance = new $controller;
-        $response = $controllerInstance->$action($parameters);
+        $response = $controllerInstance->$action($parameters, $request);
 
         return ApiResponse::normalize($response);
     }

@@ -33,7 +33,7 @@
   - `_controller`;
   - `_action`;
   - allowed HTTP methods.
-- Protected routes must set `_auth` to `true`. The current foundation only checks that a Bearer token exists; JWT validation is implemented in a later authentication step.
+- Protected routes must set `_auth` to `true`. The API kernel validates the Bearer token as JWT and exposes the authenticated user to API controllers through `App\Api\ApiRequest`.
 
 Example:
 
@@ -119,5 +119,7 @@ return ApiResponse::success(AnimalResource::collection($animals));
 ## Tests
 
 - Pest is the project test runner.
+- All new behavior must be covered by automated tests.
 - API behavior must be covered with Pest tests under `tests/`.
-- New API endpoints should include tests for success, not found or invalid method when applicable, validation/auth errors when applicable, and response envelope shape.
+- Every new API endpoint must include tests for success, not found or invalid method when applicable, validation/auth errors when applicable, and response envelope shape.
+- Do not consider an API endpoint complete until its success and expected error paths are covered by tests.

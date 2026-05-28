@@ -18,3 +18,5 @@ test_*.php
 composer.phar
 package-lock.json
 info.php
+
+.php-version

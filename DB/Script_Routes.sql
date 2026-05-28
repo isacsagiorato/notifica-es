@@ -12,3 +12,10 @@ CREATE TABLE IF NOT EXISTS `routes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`(191))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+INSERT IGNORE INTO `routes` (`nome_rota`, `slug`, `controller`, `action`, `status`, `is_dynamic`, `pattern`) VALUES
+('home', '', 'SiteController', 'login', 1, 0, NULL),
+('login', 'login', 'SiteController', 'login', 1, 0, NULL),
+('login_autenticar', 'login/autenticar', 'LoginController', 'autenticar', 1, 0, NULL),
+('logout', 'logout', 'LoginController', 'logout', 1, 0, NULL),
+('dashboard', 'dashboard', 'SiteController', 'dashboard', 1, 0, NULL);
