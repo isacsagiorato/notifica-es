@@ -7,6 +7,7 @@
 - Run tests with `php composer.phar test`.
 - Check formatting with `php composer.phar format:test`.
 - Apply formatting with `php composer.phar format`.
+- More project documentation lives in `docs/`.
 
 ## Application Entry Points
 
