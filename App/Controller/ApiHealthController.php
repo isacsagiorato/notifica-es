@@ -8,7 +8,7 @@ class ApiHealthController
 {
     public function health()
     {
-        return ApiResponse::json([
+        return ApiResponse::success([
             'status' => 'ok',
         ]);
     }

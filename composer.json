@@ -3,7 +3,9 @@
   "require": {
     "php": "^8.3",
     "vlucas/phpdotenv": "^5.6",
-    "symfony/routing": "^6.4"
+    "symfony/routing": "^6.4",
+    "symfony/http-foundation": "^6.4",
+    "symfony/http-kernel": "^6.4"
   },
   "authors": [
     {
@@ -18,10 +20,13 @@
     }
   },
   "scripts": {
-    "test": "pest"
+    "test": "pest",
+    "format": "pint",
+    "format:test": "pint --test"
   },
   "require-dev": {
-    "pestphp/pest": "^4.7"
+    "pestphp/pest": "^4.7",
+    "laravel/pint": "^1.22"
   },
   "config": {
     "allow-plugins": {
