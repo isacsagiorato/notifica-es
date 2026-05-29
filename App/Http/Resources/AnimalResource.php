@@ -8,7 +8,7 @@ class AnimalResource extends ApiResource
 {
     public function toArray(): array
     {
-        return [
+        $data = [
             'id' => (int) $this->resource['id'],
             'name' => $this->resource['nome'],
             'birth_date' => $this->resource['data_nascimento'],
@@ -19,5 +19,12 @@ class AnimalResource extends ApiResource
             'photo' => $this->resource['foto'],
             'status' => $this->resource['status'],
         ];
+
+        // Presente apenas no ranking, onde a contagem de adoções é agregada.
+        if (array_key_exists('total_adocoes', $this->resource)) {
+            $data['adoption_requests'] = (int) $this->resource['total_adocoes'];
+        }
+
+        return $data;
     }
 }
