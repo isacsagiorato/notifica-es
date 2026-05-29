@@ -193,7 +193,7 @@ it('shows a public veterinarian by id', function () {
 });
 
 it('returns not found for missing public resources', function () {
-    $response = (new ApiKernel)->handle('GET', '/api/animals/999');
+    $response = (new ApiKernel)->handle('GET', '/api/species/999');
 
     expect($response['status'])->toBe(404)
         ->and($response['body']['error'])->toBe([

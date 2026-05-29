@@ -231,9 +231,6 @@ JWT. Eles devem expor apenas dados adequados para consulta publica.
 Entidades publicas implementadas:
 
 ```http
-GET /api/animals
-GET /api/animals/{id}
-
 GET /api/species
 GET /api/species/{id}
 
@@ -253,6 +250,96 @@ GET /api/veterinarians/{id}
 Entidades como `login`, `adotante`, `administrador`, `rastreador`,
 `solicitacao_adocao`, vinculos e historicos internos nao devem ser expostas
 como endpoints publicos sem uma decisao explicita de produto e seguranca.
+
+### Animais
+
+Animais tem endpoints proprios (`ApiAnimalController` + `ApiAnimalDAO`).
+A leitura e publica; a escrita exige JWT (qualquer usuario autenticado ativo).
+
+```http
+GET    /api/animals            # publico, com filtros
+GET    /api/animals/{id}       # publico, perfil do animal
+POST   /api/animals            # protegido, cadastrar
+PUT    /api/animals/{id}       # protegido, alterar
+DELETE /api/animals/{id}       # protegido, excluir
+```
+
+Filtros do `GET /api/animals` (query string, combinaveis):
+
+- `species`: filtra pela especie (ex.: `?species=Cachorro`);
+- `status`: filtra pelo status (ex.: `?status=disponivel`).
+
+Corpo de `POST`/`PUT` (chaves em ingles, iguais as da resposta):
+
+```json
+{
+  "name": "Luna",
+  "birth_date": "2025-02-01",
+  "sex": "f",
+  "species": "Gato",
+  "size": "pequeno",
+  "location": "Campinas",
+  "photo": "luna.jpg",
+  "status": "disponivel"
+}
+```
+
+Regras de validacao (`422 validation_error` quando violadas):
+
+- `name`: obrigatorio no cadastro;
+- `sex`: `m` ou `f`;
+- `size`: `pequeno`, `medio` ou `grande`;
+- `status`: `disponivel`, `adotado`, `em_tratamento` ou `reservado`
+  (padrao `disponivel` no cadastro);
+- `birth_date`: formato `YYYY-MM-DD`.
+
+O `PUT` aceita atualizacao parcial: os campos nao enviados mantem o valor atual.
+`PUT`/`DELETE` em id inexistente retornam `404 not_found` (`Animal nao encontrado.`).
+`DELETE` bem-sucedido responde `200` com `{"id": <id>, "deleted": true}`.
+
+### Ranking de animais
+
+Endpoint publico que retorna os animais ordenados por um criterio de ranking.
+
+```http
+GET /api/ranking
+GET /api/ranking?order=adotados
+```
+
+Filtros (`order`):
+
+- `adotados` (padrao): ordena por numero de solicitacoes de adocao do animal,
+  do maior para o menor. Empates sao desempatados pelo `id` crescente.
+
+Um `order` nao suportado retorna `400 bad_request`.
+
+Cada item segue o `AnimalResource` e inclui o campo extra `adoption_requests`
+com a contagem de solicitacoes de adocao:
+
+```json
+{
+  "data": [
+    {
+      "id": 2,
+      "name": "Mel",
+      "birth_date": "2024-01-15",
+      "sex": "f",
+      "species": "Cachorro",
+      "size": "pequeno",
+      "location": "Sao Paulo",
+      "photo": "mel.jpg",
+      "status": "disponivel",
+      "adoption_requests": 3
+    }
+  ],
+  "meta": {}
+}
+```
+
+> O filtro `visualizados` ainda nao esta disponivel: o schema nao possui coluna
+> de visualizacoes. Para habilitar, adicione a coluna `visualizacoes` na tabela
+> `animal`, inclua `visualizados` em `ApiRankingController::ORDERS` e adicione o
+> metodo correspondente em `RankingDAO`.
 
 ## 7. Testes
 

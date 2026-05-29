@@ -46,6 +46,13 @@ class ApiRequest
         return $this->request->request->all();
     }
 
+    public function query(string $key, ?string $default = null): ?string
+    {
+        $value = $this->request->query->get($key, $default);
+
+        return $value === null ? null : (string) $value;
+    }
+
     public function setAuthenticatedUser(AuthenticatedUser $user): void
     {
         $this->authenticatedUser = $user;
